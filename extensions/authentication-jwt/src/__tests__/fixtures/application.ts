@@ -11,10 +11,13 @@ import {RestApplication} from '@loopback/rest';
 import {RestExplorerComponent} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {JWTAuthenticationComponent, SECURITY_SCHEME_SPEC} from '../../';
-import {UserServiceBindings} from './keys';
+import {
+  JWTAuthenticationComponent,
+  SECURITY_SCHEME_SPEC,
+  UserServiceBindings,
+} from '../../';
+import {DbDataSource} from './datasources/db.datasource';
 import {MySequence} from './sequence';
-import {MyUserService} from './user.service';
 
 export class TestApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -35,9 +38,8 @@ export class TestApplication extends BootMixin(
     this.component(AuthenticationComponent);
     // Mount jwt component
     this.component(JWTAuthenticationComponent);
-
-    // Bind user service
-    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    // Bind datasource
+    this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     this.component(RestExplorerComponent);
     this.projectRoot = __dirname;

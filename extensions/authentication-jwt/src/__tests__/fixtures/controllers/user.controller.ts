@@ -2,9 +2,6 @@
 // Node module: @loopback/extension-authentication-jwt
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
-
-// Uncomment these imports to begin using these cool features!
-
 import {
   authenticate,
   TokenService,
@@ -13,10 +10,8 @@ import {
 import {inject} from '@loopback/core';
 import {get, post, requestBody} from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {TokenServiceBindings} from '../../../';
-import {UserServiceBindings} from '../keys';
-import {User} from '../models';
-import {Credentials} from '../user.service';
+import {TokenServiceBindings, User, UserServiceBindings} from '../../../';
+import {Credentials} from '../../../services/user.service';
 
 const CredentialsSchema = {
   type: 'object',

@@ -4,8 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {inject} from '@loopback/core';
-import {DefaultCrudRepository} from '@loopback/repository';
-import {DbDataSource} from '../datasources/db.datasource';
+import {DefaultCrudRepository, juggler} from '@loopback/repository';
+import {UserServiceBindings} from '../keys';
 import {UserCredentials, UserCredentialsRelations} from '../models';
 
 export class UserCredentialsRepository extends DefaultCrudRepository<
@@ -13,7 +13,10 @@ export class UserCredentialsRepository extends DefaultCrudRepository<
   typeof UserCredentials.prototype.id,
   UserCredentialsRelations
 > {
-  constructor(@inject('datasources.db') dataSource: DbDataSource) {
+  constructor(
+    @inject(`datasources.${UserServiceBindings.DATASOURCE_NAME}`)
+    dataSource: juggler.DataSource,
+  ) {
     super(UserCredentials, dataSource);
   }
 }
