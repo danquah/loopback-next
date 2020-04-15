@@ -6,6 +6,7 @@
 const debug = require('debug')('loopback:rest:sequence');
 import {inject} from '@loopback/context';
 import {RestBindings} from './keys';
+import {InvokeMiddleware} from './middleware';
 import {RequestContext} from './request-context';
 import {FindRoute, InvokeMethod, ParseParams, Reject, Send} from './types';
 
@@ -54,6 +55,13 @@ export interface SequenceHandler {
  */
 export class DefaultSequence implements SequenceHandler {
   /**
+   * Optional invoker for registered middleware in a chain.
+   * To be injected via SequenceActions.INVOKE_MIDDLEWARE.
+   */
+  @inject(SequenceActions.INVOKE_MIDDLEWARE, {optional: true})
+  protected invokeMiddleware: InvokeMiddleware = () => {};
+
+  /**
    * Constructor: Injects findRoute, invokeMethod & logError
    * methods as promises.
    *
@@ -95,6 +103,8 @@ export class DefaultSequence implements SequenceHandler {
   async handle(context: RequestContext): Promise<void> {
     try {
       const {request, response} = context;
+      // Invoke registered Express middleware
+      await this.invokeMiddleware(context);
       const route = this.findRoute(request);
       const args = await this.parseParams(request, route);
       const result = await this.invoke(route, args);

@@ -41,6 +41,12 @@ import {writeErrorToResponse} from 'strong-error-handler';
 import {BodyParser, REQUEST_BODY_PARSER_TAG} from './body-parsers';
 import {HttpHandler} from './http-handler';
 import {RestBindings, RestTags} from './keys';
+import {
+  MiddlewareActionBindingOptions,
+  ExpressMiddlewareFactory,
+  registerMiddleware,
+  Middleware,
+} from './middleware';
 import {RequestContext} from './request-context';
 import {
   ControllerClass,
@@ -570,6 +576,34 @@ export class RestServer extends Context implements Server, HttpServerLike {
   controller(controllerCtor: ControllerClass<ControllerInstance>): Binding {
     return this.bind('controllers.' + controllerCtor.name).toClass(
       controllerCtor,
+    );
+  }
+
+  /**
+   * Bind a middleware interceptor to this server context
+   *
+   * @example
+   * ```ts
+   * import myExpressMiddlewareFactory from 'my-express-middleware';
+   * const myExpressMiddlewareConfig= {};
+   * server.middleware(myExpressMiddlewareFactory, myExpressMiddlewareConfig);
+   * ```
+   * @param middlewareFactory - Middleware module name or factory function
+   * @param middlewareConfig - Middleware config
+   * @param options - Options for registration
+   *
+   * @typeParam CFG - Configuration type
+   */
+  middleware<CFG>(
+    middlewareFactory: ExpressMiddlewareFactory<CFG>,
+    middlewareConfig?: CFG,
+    options: MiddlewareActionBindingOptions = {},
+  ): Binding<Middleware> {
+    return registerMiddleware(
+      this,
+      middlewareFactory,
+      middlewareConfig,
+      options,
     );
   }
 

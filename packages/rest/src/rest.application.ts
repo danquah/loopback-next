@@ -11,6 +11,11 @@ import {ServeStaticOptions} from 'serve-static';
 import {format} from 'util';
 import {BodyParser} from './body-parsers';
 import {RestBindings} from './keys';
+import {
+  MiddlewareActionBindingOptions,
+  ExpressMiddlewareFactory,
+  Middleware,
+} from './middleware';
 import {RestComponent} from './rest.component';
 import {HttpRequestListener, HttpServerLike, RestServer} from './rest.server';
 import {
@@ -131,6 +136,33 @@ export class RestApplication extends Application implements HttpServerLike {
    */
   basePath(path = '') {
     this.restServer.basePath(path);
+  }
+
+  /**
+   * Bind a middleware interceptor to this server context
+   *
+   * @example
+   * ```ts
+   * import myExpressMiddlewareFactory from 'my-express-middleware';
+   * const myExpressMiddlewareConfig= {};
+   * server.middleware(myExpressMiddlewareFactory, myExpressMiddlewareConfig);
+   * ```
+   * @param middlewareFactory - Middleware module name or factory function
+   * @param middlewareConfig - Middleware config
+   * @param options - Options for registration
+   *
+   * @typeParam CFG - Configuration type
+   */
+  middleware<CFG>(
+    middlewareFactory: ExpressMiddlewareFactory<CFG>,
+    middlewareConfig?: CFG,
+    options: MiddlewareActionBindingOptions = {},
+  ): Binding<Middleware> {
+    return this.restServer.middleware(
+      middlewareFactory,
+      middlewareConfig,
+      options,
+    );
   }
 
   /**

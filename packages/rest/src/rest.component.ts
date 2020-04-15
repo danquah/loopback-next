@@ -31,6 +31,7 @@ import {
   FindRouteProvider,
   GetFromContextProvider,
   InvokeMethodProvider,
+  InvokeMiddlewareProvider,
   LogErrorProvider,
   ParseParamsProvider,
   RejectProvider,
@@ -48,6 +49,8 @@ import {AjvFactoryProvider} from './validation/ajv-factory.provider';
 export class RestComponent implements Component {
   providers: ProviderMap = {
     [RestBindings.SequenceActions.LOG_ERROR.key]: LogErrorProvider,
+    [RestBindings.SequenceActions.INVOKE_MIDDLEWARE
+      .key]: InvokeMiddlewareProvider,
     [RestBindings.SequenceActions.FIND_ROUTE.key]: FindRouteProvider,
     [RestBindings.SequenceActions.INVOKE_METHOD.key]: InvokeMethodProvider,
     [RestBindings.SequenceActions.REJECT.key]: RejectProvider,

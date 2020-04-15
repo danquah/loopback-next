@@ -102,6 +102,7 @@ export class RequestContext extends Context implements HandlerContext {
     onFinished(this.response, () => {
       // Close the request context when the http response is finished so that
       // it can be recycled by GC
+      this.emit('close');
       this.close();
     });
   }

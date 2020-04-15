@@ -11,6 +11,7 @@ import https from 'https';
 import {ErrorWriterOptions} from 'strong-error-handler';
 import {BodyParser, RequestBodyParser} from './body-parsers';
 import {HttpHandler} from './http-handler';
+import {InvokeMiddleware} from './middleware';
 import {RestServer} from './rest.server';
 import {RestRouter, RestRouterOptions} from './router';
 import {SequenceHandler} from './sequence';
@@ -181,6 +182,12 @@ export namespace RestBindings {
    * Bindings for potential actions that could be used in a sequence
    */
   export namespace SequenceActions {
+    /**
+     * Binding key for setting and injecting a route finding function
+     */
+    export const INVOKE_MIDDLEWARE = BindingKey.create<InvokeMiddleware>(
+      'rest.sequence.actions.invokeMiddleware',
+    );
     /**
      * Binding key for setting and injecting a route finding function
      */
