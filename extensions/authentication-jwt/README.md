@@ -138,7 +138,7 @@ _All the jwt authentication related code are marked with comment "- enable jwt
 auth -", you can search for it to find all the related code you need to enable
 the entire jwt authentication in a LoopBack 4 application._
 
-## Add Endpoint in Controller
+## Adding Endpoint in Controller
 
 After mounting the component, you can call token and user services to perform
 login, then decorate endpoints with `@authentication('jwt')` to inject the
@@ -178,17 +178,30 @@ The code snippet for whoAmI function:
 The complete file is in
 [user.controller.ts](https://github.com/strongloop/loopback-next/tree/master/extensions/authentication-jwt/src/__tests__/fixtures/controllers/user.controller.ts)
 
-## Customize Model
+## Customization
 
-1. Create your own user model and repository by `lb4 model` and
-   `lb4 repository`.
+As a prototype implementation this module provides basic functionalities in each
+service. You can customize and re-bind any element provided in the
+[component](https://github.com/strongloop/loopback-next/tree/master/extensions/authentication-jwt/src/jwt-authentication-component.ts)
+with your own one.
 
-2. The user service requires the user model, to provide your own one, you need
-   to copy the
-   [`user.service.ts`](https://github.com/strongloop/loopback-next/blob/master/extensions/authentication-jwt/src/services/user.service.ts)
-   file into your application, e.g. copy to file
-   `myapp/src/services/custom.user.service.ts`, and replace the default `User`,
-   `UserRepository` with `MyUser`, `MyUserRepository`:
+Replacing the `User` model is a bit more complicated because it's not injected
+but imported directly in related files. The sub-section covers the steps to
+provide your own `User` model and repository.
+
+### Customizing User
+
+1. Create your own user model and repository by running the `lb4 model` and
+   `lb4 repository` commands.
+
+2. The user service requires the user model and repository, to provide your own
+   ones, you can create a custom `UserService` and bind it to
+   `UserServiceBindings.USER_SERVICE`. Take a look at
+   [the default user service](https://github.com/strongloop/loopback-next/blob/master/extensions/authentication-jwt/src/services/user.service.ts)
+   for an example of `UserService` implementation.
+
+   For convenience, here is the code in `user.service.ts`. You can replace the
+   `User` and `UserRepository` with `MyUser`, `MyUserRepository`:
 
    <details>
    <summary><strong>Check The Code</strong></summary>
