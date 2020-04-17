@@ -15,7 +15,6 @@ import {
   supertest,
 } from '@loopback/testlab';
 import fs from 'fs';
-import {IncomingMessage, ServerResponse} from 'http';
 import yaml from 'js-yaml';
 import path from 'path';
 import {is} from 'type-is';
@@ -36,6 +35,7 @@ import {
   RestServerConfig,
 } from '../..';
 import {RestTags} from '../../keys';
+import {invokeMiddleware} from '../../middleware';
 const readFileAsync = util.promisify(fs.readFile);
 
 const FIXTURES = path.resolve(__dirname, '../../../fixtures');
@@ -1079,7 +1079,7 @@ paths:
 
     it('controls server urls', async () => {
       const response = await createClientForHandler(server.requestHandler).get(
-        '/openapi.json',
+        '/api/openapi.json',
       );
       expect(response.body.servers).to.containEql({url: '/api'});
     });
@@ -1087,7 +1087,7 @@ paths:
     it('controls server urls even when set via server.basePath() API', async () => {
       server.basePath('/v2');
       const response = await createClientForHandler(server.requestHandler).get(
-        '/openapi.json',
+        '/v2/openapi.json',
       );
       expect(response.body.servers).to.containEql({url: '/v2'});
     });
@@ -1113,11 +1113,10 @@ paths:
     return app.getServer(RestServer);
   }
 
-  function dummyRequestHandler(handler: {
-    request: IncomingMessage;
-    response: ServerResponse;
-  }) {
-    const {response} = handler;
+  async function dummyRequestHandler(requestContext: RequestContext) {
+    const {response} = requestContext;
+    const result = await invokeMiddleware(requestContext);
+    if (result === response) return;
     response.write('Hello');
     response.end();
   }
